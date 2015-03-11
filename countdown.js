@@ -9,8 +9,8 @@ var max_width_frac = 0.9;         // max fraction of the window width the text
 
 var time_up_msg = "Time's up!";   // message to appear when time is up
 
-var warn1_time = 60.0 * 5.0;             // time when first and second warning should
-var warn2_time = 60.0 * 2.0;             // be displayed
+var warn1_time = 5.0;             // time when first and second warning should
+var warn2_time = 2.0;             // be displayed
 
 var ok_color = [0, 153, 0];       // colors of background when ok, first
 var warn1_color = [217, 181, 0];  // warning, second warning
@@ -60,7 +60,7 @@ function update_time() {
   if (sec_remaining <= 0.0) {
     clearInterval(interval_id)
     set_text(time_up_msg);
-    $("#progressbar").progressbar("option", { value: 10000 });
+    $("#progressbar-value").css({ width: "100%"});
     return
   }
 
@@ -75,8 +75,8 @@ function update_time() {
   sec_str = sec < 10 ? "0" + sec : sec;
 
   set_text(hr_str + min_str + sec_str);
-  var val = Math.round(10000.0 * time_elapsed / total_time);
-  $("#progressbar").progressbar("option", { value: val });
+  var val = 100.0 * time_elapsed / total_time;
+  $("#progressbar-value").css({ width: val + "%"});
 }
 
 function start_countdown(duration) {
@@ -88,7 +88,7 @@ function start_countdown(duration) {
 
 (function ($) {
   set_text("Scroll down to begin");
-  start_countdown(12.0 * 60.0);
+  start_countdown(12.0);
 })(jQuery);
 
 // update the height and font size of the start_count

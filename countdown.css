@@ -32,8 +32,12 @@ html, body {
   margin-right: auto;
   margin-top: 30px;
   width: 90%;
+  height: 35px;
+  background-color: white;
 }
 
-div#progressbar div.ui-progressbar-value {
-  background: #333333 !important;
+div#progressbar div#progressbar-value {
+  width: 0%;
+  height: 100%;
+  background-color: #333333;
 }
