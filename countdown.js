@@ -1,7 +1,7 @@
 // options
-var update_interval = 250.0;      // interval in ms to update display
+var update_interval = 50.0;      // interval in ms to update display
 
-var max_height_frac = 0.9;        // max fraction of the window hight the text
+var max_height_frac = 0.75;        // max fraction of the window hight the text
                                   // may use
 
 var max_width_frac = 0.9;         // max fraction of the window width the text
@@ -9,6 +9,12 @@ var max_width_frac = 0.9;         // max fraction of the window width the text
 
 var time_up_msg = "Time's up!";   // message to appear when time is up
 
+var warn1_time = 60.0 * 5.0;             // time when first and second warning should
+var warn2_time = 60.0 * 2.0;             // be displayed
+
+var ok_color = [0, 153, 0];       // colors of background when ok, first
+var warn1_color = [217, 181, 0];  // warning, second warning
+var warn2_color = [204, 0, 0];
 
 // internally used variables
 var total_time = 0.0;             // total initial time in ms
@@ -42,17 +48,25 @@ function set_text(text) {
 function update_time() {
   var time_elapsed = Date.now() - start_time;
   var time_remaining = total_time - time_elapsed;
-  var sec_remaining = Math.trunc(time_remaining * 0.001);
+  var sec_remaining = time_remaining * 0.001;
+
+  if (sec_remaining > warn1_time)
+    $("#time_wrap").css({ backgroundColor: "rgb(" + ok_color + ")" });
+  else if (sec_remaining > warn2_time)
+    $("#time_wrap").css({ backgroundColor: "rgb(" + warn1_color + ")" });
+  else
+    $("#time_wrap").css({ backgroundColor: "rgb(" + warn2_color + ")" });
 
   if (sec_remaining <= 0.0) {
     clearInterval(interval_id)
     set_text(time_up_msg);
+    $("#progressbar").progressbar("option", { value: 10000 });
     return
   }
 
-  var hr = Math.trunc(sec_remaining / 3600.0);
+  var hr = parseInt(Math.trunc(sec_remaining) / 3600);
   sec_remaining -= hr * 3600.0;
-  var min = Math.trunc(sec_remaining / 60.0);
+  var min = parseInt(Math.trunc(sec_remaining) / 60.0);
   sec_remaining -= min * 60.0;
   var sec = Math.trunc(sec_remaining);
 
@@ -61,6 +75,8 @@ function update_time() {
   sec_str = sec < 10 ? "0" + sec : sec;
 
   set_text(hr_str + min_str + sec_str);
+  var val = Math.round(10000.0 * time_elapsed / total_time);
+  $("#progressbar").progressbar("option", { value: val });
 }
 
 function start_countdown(duration) {
@@ -72,7 +88,7 @@ function start_countdown(duration) {
 
 (function ($) {
   set_text("Scroll down to begin");
-  start_countdown(10.0);
+  start_countdown(12.0 * 60.0);
 })(jQuery);
 
 // update the height and font size of the start_count
