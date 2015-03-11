@@ -1,0 +1,27 @@
+html, body {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+#time_wrap {
+  width: 100%;
+  text-align: center;
+  display: table;
+  background-color: red;
+  height: 100px;
+  display: table;
+}
+
+#time_horizontal_wrap {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+#time {
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  font-size: 100px;
+  font-family: "sans-serif";
+  color: white;
+}
