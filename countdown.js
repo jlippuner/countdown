@@ -18,7 +18,7 @@ var warn2_color = [204, 0, 0];
 var pause_color = [150, 150, 150];
 
 // internally used variables
-var total_time = 5.0 * 60.0 * 1000.0;  // total initial time in ms
+var total_time = 12.0 * 1000.0;   // total initial time in ms
 
 var time_remaining;               // total time remaining in ms
 
@@ -34,6 +34,16 @@ var client_height, client_width;  // height and width of the window
 var running = false;              // true if the count down is running
 
 var paused = false;               // true if the count down is paused
+
+
+var states = {                    // available states of the timer
+  reset: 0,
+  running: 1,
+  paused: 2,
+  finished: 3
+};
+
+var state = states.reset;         // current state of the timer
 
 
 function set_text(text) {
@@ -95,8 +105,7 @@ function update_time() {
 
   if (time_remaining <= 0.0) {
     clearInterval(interval_id);
-    running = false;
-    paused = false;
+    state = states.finished;
   }
 
   display_time(time_remaining);
@@ -106,15 +115,13 @@ function update_time() {
 function pause() {
   clearInterval(interval_id);
   $("#main_screen").css({ backgroundColor: "rgb(" + pause_color + ")" });
-  running = false;
-  paused = true;
+  state = states.paused;
   set_help_text("Paused, press [space] to resume");
 }
 
 function resume() {
   last_timer = Date.now();
-  running = true;
-  paused = false;
+  state = states.running;
   set_help_text("");
   update_time(); // update right now, not only after update_interval
   interval_id = setInterval(update_time, update_interval);
@@ -127,8 +134,7 @@ function start_count_down() {
 
 function reset() {
   clearInterval(interval_id);
-  running = false;
-  paused = false;
+  state = states.reset;
   set_help_text("Press [space] to start count down, scroll down to set time");
   display_time(total_time);
 }
@@ -136,12 +142,14 @@ function reset() {
 function handle_keypress(e) {
   // capture space
   if (e.which == 32) {
-    if (running) {
+    if (state == states.running) {
       pause();
-    } else if (paused) {
+    } else if (state == states.paused) {
       resume();
-    } else {
+    } else if (state == states.reset) {
       start_count_down();
+    } else if (state == states.finished) {
+      reset();
     }
 
     // don't scroll down
