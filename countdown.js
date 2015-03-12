@@ -31,9 +31,9 @@ var interval_id = -1;             // id of the interval that is repeatedly
 
 var client_height, client_width;  // height and width of the window
 
-var running = false;              // true if the countdown is running
+var running = false;              // true if the count down is running
 
-var paused = false;               // true if the countdown is paused
+var paused = false;               // true if the count down is paused
 
 
 function set_text(text) {
@@ -120,7 +120,7 @@ function resume() {
   interval_id = setInterval(update_time, update_interval);
 }
 
-function start_countdown() {
+function start_count_down() {
   time_remaining = total_time;
   resume();
 }
@@ -129,7 +129,7 @@ function reset() {
   clearInterval(interval_id);
   running = false;
   paused = false;
-  set_help_text("Press [space] to start countdown, scroll down to set time");
+  set_help_text("Press [space] to start count down, scroll down to set time");
   display_time(total_time);
 }
 
@@ -141,7 +141,7 @@ function handle_keypress(e) {
     } else if (paused) {
       resume();
     } else {
-      start_countdown();
+      start_count_down();
     }
 
     // don't scroll down
