@@ -1,7 +1,7 @@
 // options
 var update_interval = 50.0;      // interval in ms to update display
 
-var max_height_frac = 0.75;        // max fraction of the window hight the text
+var max_height_frac = 0.64;        // max fraction of the window hight the text
                                   // may use
 
 var max_width_frac = 0.9;         // max fraction of the window width the text
@@ -51,11 +51,11 @@ function update_time() {
   var sec_remaining = time_remaining * 0.001;
 
   if (sec_remaining > warn1_time)
-    $("#time_wrap").css({ backgroundColor: "rgb(" + ok_color + ")" });
+    $("#main_screen").css({ backgroundColor: "rgb(" + ok_color + ")" });
   else if (sec_remaining > warn2_time)
-    $("#time_wrap").css({ backgroundColor: "rgb(" + warn1_color + ")" });
+    $("#main_screen").css({ backgroundColor: "rgb(" + warn1_color + ")" });
   else
-    $("#time_wrap").css({ backgroundColor: "rgb(" + warn2_color + ")" });
+    $("#main_screen").css({ backgroundColor: "rgb(" + warn2_color + ")" });
 
   if (sec_remaining <= 0.0) {
     clearInterval(interval_id)
@@ -86,6 +86,15 @@ function start_countdown(duration) {
   interval_id = setInterval(update_time, update_interval);
 }
 
+function handle_keypress(e) {
+  // capture space
+  if (e.which == 32) {
+
+    // don't scroll down
+    e.preventDefault();
+  }
+}
+
 (function ($) {
   set_text("Scroll down to begin");
   start_countdown(12.0);
@@ -95,7 +104,7 @@ function start_countdown(duration) {
 function update_client_size() {
   client_height = $(window).height();
   client_width = $(window).width();
-  $("#time_wrap").height(client_height + "px");
+  $("#main_screen").height(client_height + "px");
   set_text($("#time").text());
 }
 
@@ -105,4 +114,8 @@ $(window).resize(function() {
 
 $(window).ready(function() {
   update_client_size();
+});
+
+$("html").on("keydown", function(e) {
+  handle_keypress(e);
 });
