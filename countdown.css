@@ -1,4 +1,5 @@
 html, body {
+  font-family: "sans-serif";
   padding: 0px !important;
   margin: 0px !important;
 }
@@ -28,12 +29,15 @@ html, body {
   text-align: center;
 }
 
+#help_text {
+  font-size: xx-large;
+  color: white;
+}
+
 #time {
   text-overflow:ellipsis;
   white-space:nowrap;
-
   font-size: 100px;
-  font-family: "sans-serif";
   color: white;
 }
 
