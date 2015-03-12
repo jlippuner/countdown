@@ -18,7 +18,7 @@ var max_height_frac = 0.64;       // max fraction of the window hight the text
 var max_width_frac = 0.9;         // max fraction of the window width the text
                                   // may use
 
-// internally used variables
+// internally used global variables
 var time_remaining;               // total time remaining in sec
 
 var last_timer;                   // last Date.now(), time_remaining counts
@@ -86,12 +86,12 @@ function display_time(time_remaining) {
 
   if (time_remaining <= 0.0) {
     set_text(time_up_msg);
-    $("#progressbar-value").css({ width: "100%"});
+    $("#progressbar-value").css({ width: "100%" });
     return
   }
 
   var val = 100.0 * (total_time - time_remaining) / total_time;
-  $("#progressbar-value").css({ width: val + "%"});
+  $("#progressbar-value").css({ width: val + "%" });
   set_text(time_to_str(time_remaining));
 }
 
