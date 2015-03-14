@@ -3,11 +3,15 @@ changes from green to yellow (when warn 1 time is
 remaining) and finally to red (when warn 2 time is
 remaining).
 
-The count down is controlled with keyboard short cuts:
+This is intended for speakers to let them know how much
+time they have left for their talk.
+
+
+The count down is controlled with keyboard shortcuts:
 
 [space] start/pause/resume count down
 
 [r]     reset count down when paused or finished
 
-[c]     change the total time and warn 1/2 times when
-        count down is reset
+[c]     change the total time, warn 1 time, and warn 2
+        time when count down is reset
