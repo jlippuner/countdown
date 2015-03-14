@@ -1,0 +1,13 @@
+This is a simple count down clock where the background
+changes from green to yellow (when warn 1 time is
+remaining) and finally to red (when warn 2 time is
+remaining).
+
+The count down is controlled with keyboard short cuts:
+
+[space] start/pause/resume count down
+
+[r]     reset count down when paused or finished
+
+[c]     change the total time and warn 1/2 times when
+        count down is reset
