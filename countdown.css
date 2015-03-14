@@ -64,3 +64,7 @@ div#progressbar div#progressbar-value {
   width: 10%;
   text-align: center;
 }
+
+input {
+  border: 0;
+}

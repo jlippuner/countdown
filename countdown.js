@@ -4,11 +4,14 @@ var time_up_msg = "Time's up!";   // message to appear when time is up
 var ok_color = [0, 153, 0];       // colors of background when ok, first
 var warn1_color = [217, 181, 0];  // warning, second warning
 var warn2_color = [204, 0, 0];
-var pause_color = [150, 150, 150];
 
-var total_time = 12.0;            // total initial time in sec
-var warn1_time = 5.0;             // time when first and second warning should
-var warn2_time = 2.0;             // be displayed in sec
+var pause_color = [150, 150, 150]; // background when paused
+
+var bad_input_color = [255, 77, 77]; // bad input text entry background color
+
+var total_time = 12.0 * 60.0;     // total initial time in sec
+var warn1_time = 5.0 * 60.0;      // time when first and second warning should
+var warn2_time = 2.0 * 60.0;      // be displayed in sec
 
 var update_interval = 50.0;       // interval in ms to update display
 
@@ -142,13 +145,81 @@ function set_time_entries() {
   $("#warn_2_time").val(time_to_str(warn2_time));
 }
 
-function config() {
+function enter_config_mode() {
   clearInterval(interval_id);
   state = states.configuring;
   set_help_text("Enter times below and click [Set times]");
   display_time(total_time);
   set_time_entries();
   $("#config").css({ visibility: "visible" });
+}
+
+function input_failure(entry) {
+  set_help_text("Please enter times as HH:MM:SS or MM:SS");
+  $(entry).css({ backgroundColor: "rgb(" + bad_input_color + ")" });
+}
+
+function convert_number(str) {
+  var s = str.trim();
+  var patt = new RegExp("^\\d+$");
+  if (patt.test(s)) {
+    return parseInt(s);
+  } else {
+    return -1;
+  }
+}
+
+function read_time(entry) {
+  var fs = $(entry).val().split(":");
+  var hr_str, min_str, sec_str;
+  if (fs.length == 2) {
+    hr = 0;
+    min = convert_number(fs[0]);
+    sec = convert_number(fs[1]);
+  } else if (fs.length == 3) {
+    hr = convert_number(fs[0]);
+    min = convert_number(fs[1]);
+    sec = convert_number(fs[2]);
+  } else {
+    input_failure(entry);
+    return -1.0;
+  }
+
+  if ((hr < 0) || (min < 0) || (sec < 0) || (min >= 60) || (sec >= 60)) {
+    input_failure(entry);
+    return -1.0;
+  }
+
+  $(entry).css({ backgroundColor: "white" });
+  return hr * 3600.0 + min * 60.0 + sec;
+}
+
+function set_config() {
+  var new_total_time = read_time("#total_time");
+  var new_warn_1 = read_time("#warn_1_time");
+  var new_warn_2 = read_time("#warn_2_time");
+
+  if ((new_total_time < 0.0) || (new_warn_1 < 0.0) || (new_warn_2 < 0.0)) {
+    // don't need to do anything, error message already displayed
+    return
+  }
+
+  if (new_warn_1 > new_total_time) {
+    set_help_text("Warn 1 time cannot be larger than total time");
+    return
+  }
+
+  if (new_warn_2 > new_warn_1) {
+    set_help_text("Warn 2 time cannot be larger than warn 1 time");
+    return
+  }
+
+  total_time = new_total_time;
+  warn1_time = new_warn_1;
+  warn2_time = new_warn_2;
+
+  $("#config").css({ visibility: "hidden" });
+  reset();
 }
 
 function handle_keypress(e) {
@@ -176,7 +247,7 @@ function handle_keypress(e) {
   } else if ((e.which == 67) || (e.which == 99)) {
     // only start configuring if state is rest
     if (state == states.reset)
-      config();
+      enter_config_mode();
   }
 }
 
@@ -193,6 +264,7 @@ $(window).resize(function() {
 });
 
 $(window).ready(function() {
+  $("#set_config").click(set_config);
   reset();
   set_time_entries();
   update_client_size();
