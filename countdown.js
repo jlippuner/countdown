@@ -9,9 +9,9 @@ var pause_color = [150, 150, 150]; // background when paused
 
 var bad_input_color = [255, 77, 77]; // bad input text entry background color
 
-var total_time = 12.0 * 60.0;     // total initial time in sec
-var warn1_time = 5.0 * 60.0;      // time when first and second warning should
-var warn2_time = 2.0 * 60.0;      // be displayed in sec
+var total_time = 12.0;            // total initial time in sec
+var warn1_time = 5.0;             // time when first and second warning should
+var warn2_time = 2.0;             // be displayed in sec
 
 var update_interval = 50.0;       // interval in ms to update display
 
@@ -81,11 +81,11 @@ function time_to_str(sec) {
 
 function display_time(time_remaining) {
   if (time_remaining > warn1_time)
-    $("#main_screen").css({ backgroundColor: "rgb(" + ok_color + ")" });
+    $("body").css({ backgroundColor: "rgb(" + ok_color + ")" });
   else if (time_remaining > warn2_time)
-    $("#main_screen").css({ backgroundColor: "rgb(" + warn1_color + ")" });
+    $("body").css({ backgroundColor: "rgb(" + warn1_color + ")" });
   else
-    $("#main_screen").css({ backgroundColor: "rgb(" + warn2_color + ")" });
+    $("body").css({ backgroundColor: "rgb(" + warn2_color + ")" });
 
   if (time_remaining <= 0.0) {
     set_text(time_up_msg);
@@ -114,7 +114,7 @@ function update_time() {
 
 function pause() {
   clearInterval(interval_id);
-  $("#main_screen").css({ backgroundColor: "rgb(" + pause_color + ")" });
+  $("body").css({ backgroundColor: "rgb(" + pause_color + ")" });
   state = states.paused;
   set_help_text("Paused, press [space] to resume, press [r] to reset");
 }
@@ -258,7 +258,9 @@ function handle_keypress(e) {
     // don't scroll down
     e.preventDefault();
   } else if ((e.which == 82) || (e.which == 114)) {
-    reset();
+    // reset if paused or finished
+    if ((state == states.paused) || (state == states.finished))
+      reset();
   } else if ((e.which == 67) || (e.which == 99)) {
     // only start configuring if state is rest
     if (state == states.reset)
