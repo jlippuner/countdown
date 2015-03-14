@@ -145,13 +145,28 @@ function set_time_entries() {
   $("#warn_2_time").val(time_to_str(warn2_time));
 }
 
+function set_config_input_visible(visible) {
+  $("#total_time").prop("disabled", !visible);
+  $("#warn_1_time").prop("disabled", !visible);
+  $("#warn_2_time").prop("disabled", !visible);
+  $("#set_config").prop("disabled", !visible);
+
+  $("#config").css({ visibility: visible ? "visible" : "hidden" });
+
+  if (!visible) {
+    // prevent focus from staying on submit button, which would prevent [space]
+    // from working
+    $("html").focus();
+  }
+}
+
 function enter_config_mode() {
   clearInterval(interval_id);
   state = states.configuring;
   set_help_text("Enter times below and click [Set times]");
   display_time(total_time);
   set_time_entries();
-  $("#config").css({ visibility: "visible" });
+  set_config_input_visible(true);
 }
 
 function input_failure(entry) {
@@ -218,7 +233,7 @@ function set_config() {
   warn1_time = new_warn_1;
   warn2_time = new_warn_2;
 
-  $("#config").css({ visibility: "hidden" });
+  set_config_input_visible(false);
   reset();
 }
 
@@ -268,6 +283,7 @@ $(window).ready(function() {
   reset();
   set_time_entries();
   update_client_size();
+  set_config_input_visible(false);
 });
 
 $("html").on("keydown", function(e) {
