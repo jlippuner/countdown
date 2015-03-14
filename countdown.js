@@ -76,10 +76,10 @@ function set_text(text) {
   if (this_correction_fac < correction_fac)
     correction_fac = this_correction_fac;
 
-  // round to 0.05
-  correction_fac = 0.05 * Math.trunc(correction_fac / 0.05);
-  var font_size = correction_fac * parseInt($("#time").css('font-size'));
-  $("#time").css({ fontSize: font_size + "px"});
+  if (Math.abs(correction_fac - 1.0) > 0.1) {
+    var font_size = correction_fac * parseInt($("#time").css('font-size'));
+    $("#time").css({ fontSize: font_size + "px"});
+  }
 }
 
 function set_help_text(text) {
@@ -87,6 +87,12 @@ function set_help_text(text) {
 }
 
 function time_to_str(sec) {
+  var negative = false;
+  if (sec < 0.0) {
+    negative = true;
+    sec = -sec;
+  }
+
   var hr = parseInt(Math.trunc(sec) / 3600);
   sec -= hr * 3600.0;
   var min = parseInt(Math.trunc(sec) / 60.0);
@@ -97,7 +103,7 @@ function time_to_str(sec) {
   min_str = (min < 10 ? "0" + min : min) + ":";
   sec_str = sec < 10 ? "0" + sec : sec;
 
-  return hr_str + min_str + sec_str;
+  return (negative ? "-" : "") + hr_str + min_str + sec_str;
 }
 
 function display_time(time_remaining) {
@@ -107,16 +113,31 @@ function display_time(time_remaining) {
     $("body").css({ backgroundColor: "rgb(" + warn1_color + ")" });
   else
     $("body").css({ backgroundColor: "rgb(" + warn2_color + ")" });
+  $("#time").css({ color: "white" });
 
   if (time_remaining <= 0.0) {
-    set_text(time_up_msg);
-    $("#progressbar-value").css({ width: "100%" });
-    return
-  }
+    var quarterSec = Math.trunc(-time_remaining * 4.0);
+    var mod = quarterSec % 16;
 
-  var val = 100.0 * (total_time - time_remaining) / total_time;
-  $("#progressbar-value").css({ width: val + "%" });
-  set_text(time_to_str(time_remaining));
+    if (mod % 2 == 1) {
+      $("body").css({ backgroundColor: "white" });
+      $("#time").css({ color: "rgb(" + warn2_color + ")" });
+    } else {
+      $("body").css({ backgroundColor: "rgb(" + warn2_color + ")" });
+      $("#time").css({ color: "white" });
+    }
+
+    if (mod < 8)
+      set_text(time_up_msg);
+    else
+      set_text(time_to_str(time_remaining));
+
+    $("#progressbar-value").css({ width: "100%" });
+  } else {
+    set_text(time_to_str(time_remaining));
+    var val = 100.0 * (total_time - time_remaining) / total_time;
+    $("#progressbar-value").css({ width: val + "%" });
+  }
 }
 
 function update_time() {
@@ -124,10 +145,10 @@ function update_time() {
   var time_elapsed = (now - last_timer) * 0.001; // convert from ms to s
   time_remaining -= time_elapsed;
 
-  if (time_remaining <= 0.0) {
-    clearInterval(interval_id);
-    state = states.finished;
-  }
+//   if (time_remaining <= 0.0) {
+//     clearInterval(interval_id);
+//     state = states.finished;
+//   }
 
   display_time(time_remaining);
   last_timer = now;
@@ -136,6 +157,7 @@ function update_time() {
 function pause() {
   clearInterval(interval_id);
   $("body").css({ backgroundColor: "rgb(" + pause_color + ")" });
+  $("#time").css({ color: "white" });
   state = states.paused;
   set_help_text("Paused, press [space] to resume, press [r] to reset");
 }

@@ -50,6 +50,7 @@ html, body {
 #help_text {
   font-size: xx-large;
   color: white;
+  white-space:nowrap;
 }
 
 #time {
@@ -77,6 +78,7 @@ div#progressbar div#progressbar-value {
   color: white;
   font-size: xx-large;
   visibility: hidden;
+  white-space:nowrap;
 }
 
 #config input, button {
